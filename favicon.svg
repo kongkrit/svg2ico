@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>SVG2ICO Converter Icon</title>
+  <desc>A dark-themed icon with text SVG2ICO. SVG is associated with a vector curve, 2 is a green accent, and ICO is associated with a pixel grid.</desc>
+
+  <rect x="0" y="0" width="64" height="64" rx="12" fill="#252525" />
+
+  <g stroke-width="2" fill="none">
+    <path d="M 8 46 Q 16 54, 24 46 T 40 46" stroke="#444444" opacity="0.6"/>
+    <g fill="#444444" stroke="none" opacity="0.6">
+      <rect x="44" y="43" width="3" height="3"/> <rect x="48" y="43" width="3" height="3"/> <rect x="52" y="43" width="3" height="3"/>
+      <rect x="44" y="47" width="3" height="3"/> <rect x="48" y="47" width="3" height="3"/> <rect x="52" y="47" width="3" height="3"/>
+    </g>
+  </g>
+
+  <g font-family="sans-serif" font-weight="bold" font-size="15" text-anchor="middle">
+    <text x="18" y="37" fill="#e0e0e0">SVG</text>
+    
+    <text x="32" y="37" fill="#66bb6a" font-size="16">→</text>
+    
+    <text x="46" y="37" fill="#e0e0e0">ICO</text>
+  </g>
+</svg>
