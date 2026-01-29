@@ -28,6 +28,10 @@
         .upload-area:hover { border-color: #888; background-color: #2a2a2a; }
 
         .preview-container { margin-top: 2rem; }
+        #preview-title { 
+            margin-bottom: 0.5rem; 
+            color: #888; 
+        }
         canvas { 
             border: 1px solid #444; 
             background-image: linear-gradient(45deg, #2a2a2a 25%, transparent 25%), linear-gradient(-45deg, #2a2a2a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #2a2a2a 75%), linear-gradient(-45deg, transparent 75%, #2a2a2a 75%);
@@ -62,9 +66,11 @@
         <input type="file" id="file-input" accept=".svg" class="hidden">
     </div>
 
+
+
     <div id="preview-section" class="preview-container hidden">
-        <p style="margin-bottom:0.5rem; color:#888;">Preview (256x256)</p>
-        <canvas id="preview-canvas" width="256" height="256"></canvas>
+        <p id="preview-title">Preview</p>
+        <canvas id="preview-canvas"></canvas>
         <br>
         <button id="download-btn">Download .ICO</button>
     </div>
@@ -72,6 +78,9 @@
     <div id="error-msg" class="error"></div>
 
 <script>
+// --- Configuration ---
+const outputSize = 256;
+
 // --- Utility ---
 const byId = id => document.getElementById(id);
 
@@ -80,12 +89,17 @@ const dom = {
     dropZone: byId("drop-zone"),
     fileInput: byId("file-input"),
     previewSection: byId("preview-section"),
+    previewTitle: byId("preview-title"),
     canvas: byId("preview-canvas"),
     btn: byId("download-btn"),
     error: byId("error-msg")
 };
 
+// Set initial text for titles
+if (dom.previewTitle) dom.previewTitle.textContent = `Preview (${outputSize}x${outputSize})`;
+
 let currentFileName = "icon";
+let currentImg = null;
 
 // --- Logic ---
 
@@ -119,8 +133,10 @@ async function createIcoBlob(pngBlob) {
     view.setUint16(4, 1, true); // Count (1 image)
 
     // --- Directory Entry ---
-    view.setUint8(6, 0);    // Width (0 = 256px)
-    view.setUint8(7, 0);    // Height (0 = 256px)
+    const w = outputSize >= 256 ? 0 : outputSize;
+    const h = outputSize >= 256 ? 0 : outputSize;
+    view.setUint8(6, w);    // Width
+    view.setUint8(7, h);    // Height
     view.setUint8(8, 0);    // Colors (0 = No palette)
     view.setUint8(9, 0);    // Reserved
     view.setUint16(10, 1, true); // Color Planes
@@ -149,9 +165,14 @@ function processFile(file) {
     reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
+            currentImg = img;
+            
+            // Setup preview
+            dom.canvas.width = outputSize;
+            dom.canvas.height = outputSize;
             const ctx = dom.canvas.getContext('2d');
-            ctx.clearRect(0, 0, 256, 256);
-            ctx.drawImage(img, 0, 0, 256, 256);
+            ctx.clearRect(0, 0, outputSize, outputSize);
+            ctx.drawImage(img, 0, 0, outputSize, outputSize);
             dom.previewSection.classList.remove('hidden');
         };
         img.src = e.target.result;
@@ -182,7 +203,16 @@ dom.dropZone.addEventListener('drop', (e) => {
 });
 
 dom.btn.addEventListener('click', () => {
-    dom.canvas.toBlob(async (blob) => {
+    if (!currentImg) return;
+    
+    // Generate output at outputSize
+    const offCanvas = document.createElement('canvas');
+    offCanvas.width = outputSize;
+    offCanvas.height = outputSize;
+    const ctx = offCanvas.getContext('2d');
+    ctx.drawImage(currentImg, 0, 0, outputSize, outputSize);
+    
+    offCanvas.toBlob(async (blob) => {
         if (blob) {
             const icoBlob = await createIcoBlob(blob);
             triggerDownload(icoBlob, currentFileName);

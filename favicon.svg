@@ -13,10 +13,8 @@
   </g>
 
   <g font-family="sans-serif" font-weight="bold" font-size="15" text-anchor="middle">
-    <text x="18" y="37" fill="#e0e0e0">SVG</text>
-    
-    <text x="32" y="37" fill="#66bb6a" font-size="16">→</text>
-    
+    <text x="18" y="37" fill="#90b090">SVG</text>
     <text x="46" y="37" fill="#e0e0e0">ICO</text>
+	<text x="32" y="37" fill="#66cc6a" font-size="16">→</text>
   </g>
 </svg>
